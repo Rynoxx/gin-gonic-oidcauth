@@ -111,9 +111,23 @@ func (o *OidcAuth) AuthRequired() gin.HandlerFunc {
 			c.Abort()
 			return
 		}
+
 		// The user credentials was found, set user's loginClaim to key AuthUserKey in this context, the user's id can be read later using
 		// c.MustGet(oidcauth.AuthUserKey).
-		c.Set(AuthUserKey, login)
+
+		if o.config.UserFromLoginClaim != nil {
+			user, err := o.config.UserFromLoginClaim(login)
+
+			if err != nil {
+				c.AbortWithError(http.StatusInternalServerError, err)
+				return
+			}
+
+			c.Set(AuthUserKey, user)
+		} else {
+			c.Set(AuthUserKey, login)
+		}
+
 		c.Next()
 	}
 }
@@ -250,6 +264,17 @@ func (o *OidcAuth) AuthCallback(c *gin.Context) {
 		})
 		return
 	}
+
+	// Make sure everything is valid before we do the auth callback
+	if login, ok := claims[o.config.LoginClaim]; ok && o.config.AuthCallback != nil {
+		err := o.config.AuthCallback(login.(string), claims)
+
+		if err != nil {
+			c.AbortWithError(http.StatusInternalServerError, err)
+			return
+		}
+	}
+
 	c.Redirect(http.StatusFound, redirectURL)
 }
 
@@ -309,5 +334,4 @@ func (o *OidcAuth) doAuthentication(c *gin.Context) {
 	}
 
 	o.Login(c)
-	return
 }

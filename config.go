@@ -54,6 +54,10 @@ type Config struct {
 	// NOTE: If you require / to be authenticated, setting this to / will start the login process immediately, which may not be desirable.
 	// Default value is: "/"
 	LogoutURL string
+
+	UserFromLoginClaim func(loginClaim string) (interface{}, error)
+
+	AuthCallback func(loginClaim string, claim map[string]interface{}) error
 }
 
 // DefaultConfig will create a new config object with defaults
