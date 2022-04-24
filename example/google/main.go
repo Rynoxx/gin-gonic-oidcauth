@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	oidcauth "github.com/TJM/gin-gonic-oidcauth"
+	oidcauth "github.com/Rynoxx/gin-gonic-oidcauth"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-gonic/gin"
@@ -63,7 +63,6 @@ func main() {
 			out = fmt.Sprintf("Hello, %s <%s>.\nLogin: %s\n", name, email, login)
 			// session.Save() // if it has been changed, which it has not
 			c.String(http.StatusOK, out)
-			return
 		})
 	}
 
