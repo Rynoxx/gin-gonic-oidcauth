@@ -1,4 +1,4 @@
-module github.com/TJM/gin-gonic-oidcauth
+module github.com/Rynoxx/gin-gonic-oidcauth
 
 go 1.15
 
